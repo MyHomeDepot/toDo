@@ -1,8 +1,7 @@
-//
-//  ItemModel.swift
-//  ToDo
-//
-//  Created by LEO on 29.07.2024.
-//
-
 import Foundation
+
+struct ItemModel: Identifiable, Equatable {
+    var name: String
+    var isComplited: Bool = false
+    var id: UUID = UUID()
+}

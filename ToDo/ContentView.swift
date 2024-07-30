@@ -1,21 +1,33 @@
-//
-//  ContentView.swift
-//  ToDo
-//
-//  Created by LEO on 29.07.2024.
-//
-
 import SwiftUI
 
 struct ContentView: View {
+    
+    @ObservedObject var viewModel = ListModel()
+    @State var name = ""
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            List {
+                ForEach (viewModel.todos) { todo in
+                    HStack {
+                        Text(todo.name)
+                        Spacer()
+                        Button { viewModel.statusToggle(todo: todo)
+                        } label: { Image(systemName: todo.isComplited ? "checkmark" : "square")
+                        }
+                    }
+                }
+                .onDelete(perform: viewModel.delete(index:))
+                
+                TextField("Add a new storie", text: $name)
+                    .onSubmit {
+                        viewModel.addItem(name: name)
+                        name = ""
+                    }
+            }
+            .navigationTitle("Stories")
         }
-        .padding()
+        
     }
 }
 
