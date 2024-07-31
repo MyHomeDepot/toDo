@@ -3,11 +3,44 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var viewModel = ListModel()
-    @State var name = ""
+    @State private var name = ""
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             List {
+                Section {
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Text("\(viewModel.taskCounter())")
+                                .multilineTextAlignment(.center)
+                            Spacer()
+                        }
+                        
+                        if viewModel.todos.count != 0 {
+                            Spacer()
+                            HStack {
+                                Text("To do - \(viewModel.stateCounter(state: "To do"))")
+                                Spacer()
+                                Text("In progress - \(viewModel.stateCounter(state: "In progress"))")
+                            }
+                            HStack {
+                                Text("Done - \(viewModel.stateCounter(state: "Done"))")
+                                Spacer()
+                                Text("Not process - \(viewModel.stateCounter(state: ""))")
+                            }
+                        }
+                    }
+                }
+                
+                Section {
+                    TextField("Add a new task", text: $name)
+                        .onSubmit {
+                            viewModel.addItem(name: name)
+                            name = ""
+                        }
+                }
+                
                 ForEach (viewModel.todos) { todo in
                     Section {
                         VStack {
@@ -26,8 +59,8 @@ struct ContentView: View {
                                     viewModel.changeState(todo: todo, state: newState)
                                 }
                             )) {
-                                ForEach(STATES, id: \.self) { state in
-                                    Text(state)
+                                ForEach(STATES, id: \.self) {
+                                    Text($0)
                                 }
                             }
                             .pickerStyle(.segmented)
@@ -35,16 +68,8 @@ struct ContentView: View {
                     }
                 }
                 .onDelete(perform: viewModel.delete(index:))
-                
-                Section {
-                    TextField("Add a new storie", text: $name)
-                        .onSubmit {
-                            viewModel.addItem(name: name)
-                            name = ""
-                        }
-                }
             }
-            .navigationTitle("Stories")
+            .navigationTitle("My List")
         }
     }
     
