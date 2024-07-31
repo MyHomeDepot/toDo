@@ -3,7 +3,7 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var viewModel = ListModel()
-    @State private var name = ""
+    @State private var title = ""
     
     var body: some View {
         NavigationStack {
@@ -34,10 +34,10 @@ struct ContentView: View {
                 }
                 
                 Section {
-                    TextField("Add a new task", text: $name)
+                    TextField("Add a new task", text: $title)
                         .onSubmit {
-                            viewModel.addItem(name: name)
-                            name = ""
+                            viewModel.addItem(title: title)
+                            title = ""
                         }
                 }
                 
@@ -45,7 +45,12 @@ struct ContentView: View {
                     Section {
                         VStack {
                             HStack {
-                                Text(todo.name)
+                                TextField(todo.title, text: Binding(
+                                    get: { todo.title },
+                                    set: { newTitle in
+                                        viewModel.changeTitle(todo: todo, title: newTitle)
+                                    }
+                                ))
                                 Spacer()
                                 Button {
                                     viewModel.checkToggle(todo: todo)
@@ -53,6 +58,7 @@ struct ContentView: View {
                                     Image(systemName: todo.isComplited ? "checkmark" : "square")
                                 }
                             }
+                            Spacer()
                             Picker("Current state", selection: Binding(
                                 get: { todo.state },
                                 set: { newState in

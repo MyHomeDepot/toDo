@@ -5,8 +5,8 @@ let STATES = ["To do", "In progress", "Done"]
 class ListModel: ObservableObject {
     @Published var todos: [ItemModel] = []
     
-    func addItem(name: String) {
-        todos.append(ItemModel(name: name))
+    func addItem(title: String) {
+        todos.append(ItemModel(title: title))
     }
     
     func checkToggle(todo: ItemModel) {
@@ -17,6 +17,11 @@ class ListModel: ObservableObject {
     func changeState(todo: ItemModel, state: String) {
         guard let index = todos.firstIndex(of: todo) else { return }
         todos[index].state = state
+    }
+    
+    func changeTitle(todo: ItemModel, title: String) {
+        guard let index = todos.firstIndex(of: todo) else { return }
+        todos[index].title = title
     }
     
     func taskCounter() -> String {
